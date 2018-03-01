@@ -1,0 +1,42 @@
+package cn.it.hotel.service.impl;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import cn.it.hotel.model.Client;
+import cn.it.hotel.service.ClientService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="classpath:applicationContext-*.xml")
+public class ClientServiceImplTest {
+
+	@Resource
+	private ClientService clientService;
+	
+	/*@Test
+	public void testQuery(){
+		for(Client temp:clientService.query()){
+			System.out.println(temp.toString());
+		}
+	}
+	
+	@Test
+	public void getCount(){
+		System.out.println(clientService.getCount(""));
+	}
+	
+	@Test
+	public void queryClient(){
+		System.out.println(clientService.queryClient("", 1, 2));
+	}*/
+	
+	@Test
+	public void save(){
+		Client t=new Client("李文滨", "123456", "122455555");
+		clientService.save(t);
+	}
+}

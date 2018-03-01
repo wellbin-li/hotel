@@ -1,0 +1,216 @@
+/*删除酒店数据库,如果存在*/
+drop database if exists hotel;
+/*创建数据库,并设置编码*/
+create database hotel default character set utf8;
+
+use hotel;
+
+drop table if exists user;
+/*删除客房类型表*/
+drop table if exists roomcategory;
+/*删除客房状态表*/
+drop table if exists roomstate;
+/*删除客房表*/
+drop table if exists room;
+/*删除顾客表*/
+drop table if exists client;
+/*删除预订表*/
+drop table if exists orders;
+/*删除业务表*/
+drop table if exists business;
+
+/*============================*/
+/* Table: 用户表结构 		  */
+/*============================*/
+create table user
+(
+   /* 用户编号,自动增长 */
+   uid                  int not null auto_increment,
+   /* 用户登录名  */
+   ulogin               varchar(20),
+   /* 用户姓名  */
+   uname                varchar(20),
+   /* 用户密码 */
+   upassword            varchar(20),
+   /* 用户性别（0-男，1-女） */
+   usex                 int,
+   /* 用户电话 */
+   uphone               varchar(20),
+   /* 用户类型（0-客服，1-管理员）*/
+   ucategory            int,
+   /* 用户状态（0-未登录，1-登录）*/
+   ustate               int,
+   /* 设置编号为主键 */
+   primary key (uid)
+);
+/*=============================*/
+/* Table: 客房类型表结构 		   */
+/*=============================*/
+create table roomcategory
+(
+   /* 类型编号,自动增长 */
+   rcid                  int not null auto_increment,
+   /* 类型名称 */
+   rcname                varchar(20),
+   /* 此类客房价格 */
+   rcprice               decimal(8,2),
+   /* 配置床位 */
+   rcnum                 int,
+    /* 类型是否为热点类别*/
+   rchot                 bool default false,
+   /* 外键,此类型由哪位用户管理 */
+   rcuid                 int,
+   /* 设置类型编号为主键 */
+   primary key (rcid)
+);
+/*=============================*/
+/* Table: 客房状态表结构 		   */
+/*=============================*/
+create table roomstate
+(
+   /* 状态编号,自动增长 */
+   rsid                  int not null auto_increment,
+   /* 状态名称 */
+   rsname                varchar(20),
+   /* 设置状态编号为主键 */
+   primary key (rsid)
+);
+/*=============================*/
+/* Table: 客房表结构 		   */
+/*=============================*/
+create table room
+(
+   /* 客房编号,自动增长 */
+   rid                   int not null auto_increment,
+   /* 客房名称 */
+   rname                 varchar(20),
+   /* 外键,客房种类编号 */
+   rrcid                 int,
+   /*  外键,客房状态编号 */
+   rrsid                 int,
+   /* 简介,客房描述 */
+   rremark               varchar(200),
+   /* 设置客房编号为主键 */
+   primary key (rid)
+);
+/*=============================*/
+/* Table: 顾客表结构 		   */
+/*=============================*/
+create table client
+(
+   /* 顾客编号,自动增长 */
+   cid                   int not null auto_increment,
+   /* 顾客姓名 */
+   cname                 varchar(20),
+   /* 顾客身份证号码 */
+   cidcard               varchar(18),
+   /* 顾客电话 */
+   cphone                varchar(20),
+   /* 设置顾客编号为主键 */
+   primary key (cid)
+);
+/*=============================*/
+/* Table: 预订表结构 		   */
+/*=============================*/
+create table orders
+(
+   /* 预订编号,自动增长 */
+   oid                   int not null auto_increment,
+   /* 外键,顾客编号 */
+   ocid                  int,
+   /* 外键,客房编号 */
+   orid                  int,
+   /* 预订时间*/
+   otime                 timestamp,
+   /* 入住日期*/
+   odate                 date,
+   /* 预订天数*/
+   odays                 int,
+   /* 订金 */
+   ocash                 decimal(8,2),
+   /* 外键,处理人*/
+   ouid                  int,
+   /* 说明，订单描述*/
+   oremark               varchar(200),
+   /* 设置顾客编号为主键 */
+   primary key (oid)
+);
+/*=============================*/
+/* Table: 业务表结构 		   */
+/*=============================*/
+create table business
+(
+   /* 业务编号,自动增长 */
+   bid                   int not null auto_increment,
+   /* 外键,顾客编号 */
+   bcid                  int,
+   /* 外键,客房编号 */
+   brid                  int,
+   /* 入住时间*/
+   bdate                 timestamp,
+   /* 入住天数*/
+   bdays                 int,
+   /* 押金 */
+   bcash                 decimal(8,2),
+   /* 总金额 */
+   bfee                 decimal(8,2),
+   /* 外键,处理人*/
+   buid                  int,
+   /* 说明，业务描述*/
+   bremark               varchar(200),
+   /* 设置顾客编号为主键 */
+   primary key (bid)
+);
+/* 用户测试用例 */
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('admin','张三','admin',0,'13576864367',0,0);
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('user','李四','user',1,'13576864367',1,0);
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('user1','王五','user1',0,'13576864367',1,0);
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('user2','赵六','user2',1,'13576864367',0,0);
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('user3','张七','user3',0,'13576864367',1,0);
+INSERT INTO user(ulogin,uname,upassword,usex,uphone,ucategory,ustate) values ('user4','吴八','user4',1,'13576864367',0,0);
+/* 客房种类测试用例 */
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('标准（单）间',268.88,1,false,1);
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('标准（双）间',298,2,true,2);
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('行政套房',398,2,false,1);
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('豪华套房',598,2,false,1);
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('大床房',288,1,true,2);
+INSERT INTO roomcategory(rcname,rcprice,rcnum,rchot,rcuid) values ('特价房',198,1,true,2);
+/* 客房状态测试用例 */
+INSERT INTO roomstate(rsname) values ('空');
+INSERT INTO roomstate(rsname) values ('已预订');
+INSERT INTO roomstate(rsname) values ('已入住');
+/* 客房测试用例 */
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8801',1,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8802',1,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8803',2,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8804',3,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8805',4,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8806',5,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8807',1,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8808',2,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8809',3,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8810',5,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8811',1,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8812',6,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8813',2,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8814',3,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8815',4,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8816',5,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8817',1,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8818',2,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8819',3,1,"此房间光线较好");
+INSERT INTO room(rname,rrcid,rrsid,rremark) values ('8820',6,1,"此房间光线较好");
+/* 顾客测试用例 */
+INSERT INTO client(cname,cidcard,cphone) values ('张三A','422202199428371639','15627382738');
+INSERT INTO client(cname,cidcard,cphone) values ('李四A','422202193828371639','13127382738');
+INSERT INTO client(cname,cidcard,cphone) values ('王五A','422202193828937239','13027382738');
+INSERT INTO client(cname,cidcard,cphone) values ('赵六A','422202193828371639','13227382738');
+INSERT INTO client(cname,cidcard,cphone) values ('张七A','422202193828371639','13327382738');
+
+SELECT * FROM user;
+SELECT * FROM roomcategory;
+SELECT * FROM roomstate;
+SELECT * FROM room;
+SELECT * FROM client;
+SELECT * FROM orders;
+SELECT * FROM business;

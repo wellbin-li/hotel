@@ -1,0 +1,146 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<%@ include file="/public/head.jspf" %>
+  	<style type="text/css">
+  		form div{
+  			margin:25;
+  			margin-left:10;
+  		}
+  	</style>
+  	<script type="text/javascript">
+  		$(function(){
+  			//iframe 中的dg对象
+  			var dg=parent.$("iframe[title='用户信息管理']").get(0).contentWindow.$("#dg");
+  			//管理员列表
+  			$('#ss').combobox({    
+			    panelHeight:'auto',
+			    editable:false
+			}); 
+			//完成数据的回显(此代码尽量放在远程加载下拉框的前面)
+  			var rows=dg.datagrid("getSelections");
+  			$('#ff').form('load',{
+				uid:rows[0].uid,
+				ulogin:rows[0].ulogin,
+				uname:rows[0].uname,
+				upassword:rows[0].upassword,
+				usex:rows[0].usex,
+				uphone:rows[0].uphone,
+				ucategory:rows[0].ucategory
+			});
+			//自定义验证方法 向validatebox.defaults.relus中注册新函数
+			$.extend($.fn.validatebox.defaults.rules, { 
+				//函数的名称:函数实现体(又是一个json对象，里面包括函数的实现，和错误的消息设置)   
+			    userUlogin: {  
+			    	//函数实现,如果返回为false，则验证失败 
+			        validator: function(value,param){
+			        	var userUlogin=$("#userUlogin").val().trim();
+			        	var haha = " ";
+			        	//ajax验证    
+			         	$.ajax({
+			                type : 'post',
+			                async : false,
+			                url : 'user_validateUserUlogin.action',
+			                data : {
+			                    "userUlogin" : userUlogin
+			                },
+			                success : function(data) {
+			                    haha = data;
+			                }
+			            });
+			            console.log(haha);
+            			return haha.indexOf("true");
+			        },   
+			        //错误消息 
+			        message: '用户名已存在'   
+			    },
+			     mobile: {// 验证手机号码  
+	               validator: function (value) {  
+	                   return /^(13|15|18)\d{9}$/i.test(value);  
+	               },  
+	               message: '手机号码格式不正确'  
+	            },      
+			});	
+  			$("input[name=ulogin]").validatebox({
+  				required:true,
+  				missingMessage:'请输入登录名'
+  			});
+  			$("input[name=uname]").validatebox({
+  				required:true,
+  				missingMessage:'请输入姓名'
+  			});
+  			$("input[name=upassword]").validatebox({
+  				required:true,
+  				missingMessage:'请输入密码'
+  			});
+  			$("input[name=uphone]").validatebox({
+  				required:true,
+  				missingMessage:'请输入联系电话'
+  			});
+  			//窗体弹出默认时禁用验证
+  			$("#ff").form("disableValidation");
+  			//注册button事件
+  			$("#btn").click(function(){
+  				//开启验证
+  				$("#ff").form("enableValidation");
+  				if($("#ff").form("validate")){
+  					//提交数据
+  					$('#ff').form('submit', {
+						url:'user_update.action',
+						success: function(){
+							//关闭当前窗体
+							parent.$("#win").window("close");
+							//刷新页面 获取aindex--->iframe--->dg    dom--->jquery---easyui
+							//不兼容  parent.$("iframe[title='类别管理']").contents().find("#dg").datagrid("getSelections");
+							dg.datagrid("reload");
+						}
+					});
+  					
+  				}
+  			});
+  		});
+  	</script>
+  </head>
+  
+  <body>
+  	<form id="ff" method="post">   
+  		<div>   
+	        <label for="ulogin">登录名:</label>   
+	        <input id="userUlogin" class="easyui-validatebox" type="text" name="ulogin" data-options="validType:'userUlogin'"/>   
+	    </div>   
+	    <div>   
+	        <label for="uname">姓名:</label>   
+	        <input type="text" name="uname"/>   
+	    </div>   
+	    <div>   
+	        <label for="upassword">密码:</label>   
+	        <input type="text" name="upassword" class="easyui-validatebox" validType="length[4,32]"/>   
+	    </div>
+	    <div>   
+	        <label for="usex">性别:</label>
+	        <input type="radio" name="usex" value="0" checked="checked"/>男
+	        <input type="radio" name="usex" value="1"/>女
+	    </div>   
+	    <div>   
+	        <label for="uphone">联系电话:</label>   
+	        <input type="text" name="uphone" class="easyui-validatebox" validType="mobile"/>   
+	    </div> 
+	    <div>
+	    	<label for="ucategory">用户类型:</label>   
+	        <select id="ss" class="easyui-combobox" name="ucategory" style="width:173px;">   
+			    <option value="0">客服</option>     
+			    <option value="1">管理员</option>     
+			</select>  
+	    </div>
+	    <div>   
+	        <label for="ustate"></label>   
+	        <input type="hidden" name="ustate" value="0"/>   
+	    </div> 
+	    <div>
+	    	<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'">更新</a>
+	    	<input type="hidden" name="uid"/>
+	    </div>    
+	</form>  
+  </body>
+</html>

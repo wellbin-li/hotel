@@ -1,0 +1,12 @@
+package cn.it.hotel.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.User;
+import cn.it.hotel.service.UserService;
+
+@SuppressWarnings("unchecked")
+@Service("userService")
+public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
+	//管理员登录功能
+}

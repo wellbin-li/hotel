@@ -1,0 +1,18 @@
+package cn.it.hotel.service;
+
+import java.util.List;
+
+import cn.it.hotel.model.Business;
+
+public interface BusinessService extends BaseService<Business> {
+
+	    //查询业务信息，级联客户、客房、处理人
+		public List<Business> queryJoinRoomAndRoomcategoryAndClientAndUser(String bname,int page,int size);
+		//根据关键字查询总记录数
+		public Long getCount(String bremark);
+		//根据ids删除多条记录
+		public void deleteByBids(String bids);
+		
+		//查询热点商品的销售量
+		public List<Object> querySale(int number);
+}

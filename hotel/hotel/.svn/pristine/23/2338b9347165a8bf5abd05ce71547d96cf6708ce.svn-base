@@ -1,0 +1,17 @@
+package cn.it.hotel.action;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import cn.it.hotel.model.User;
+import cn.it.hotel.service.UserService;
+
+@Controller
+@Scope("prototype")
+public class UserAction extends BaseAction<User> {
+
+	public String query(){
+		jsonList=userService.query();
+		return "jsonList";
+	}
+}

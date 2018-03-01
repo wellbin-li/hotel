@@ -1,0 +1,69 @@
+package cn.it.hotel.service.impl;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.PageContext;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.User;
+import cn.it.hotel.service.UserService;
+
+@SuppressWarnings("unchecked")
+@Service("userService")
+public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
+	
+	
+	@Override
+	public List<User> queryUser(String uname, int page, int size) {
+		String hql="FROM User u WHERE u.uname LIKE :uname";
+		return getSession().createQuery(hql)
+				.setString("uname", "%" + uname + "%")
+				.setFirstResult((page-1)*size)
+				.setMaxResults(size)
+				.list();
+	}
+
+	@Override
+	public Long getCount(String uname) {
+		String hql="SELECT count(u) FROM User u WHERE u.uname LIKE :uname";
+		return (Long)getSession().createQuery(hql)
+				.setString("uname", "%" + uname + "%")
+				.uniqueResult();
+	}
+
+	@Override
+	public void deleteByUids(String uids) {
+		String hql="DELETE FROM User WHERE uid in (" + uids + ")";
+		getSession().createQuery(hql)
+				.executeUpdate();
+	}
+	
+	//管理员登录功能
+	@Override
+	public boolean validateUser(String user, String pass) {
+		String hql="SELECT u FROM User u WHERE u.ulogin LIKE :ulogin";
+		User user1=(User)getSession().createQuery(hql).setString("ulogin", user).uniqueResult();
+		if((user1!=null)&&(user1.getUpassword().equals(pass))){
+			System.out.println("登录成功");
+			System.out.println("用户名："+user1.getUlogin());
+			System.out.println("密码："+user1.getUpassword());
+			HttpSession session = ServletActionContext.getRequest().getSession();
+			session.setAttribute("nowuser", user1);
+			return true;
+		}
+		System.out.println("用户名或密码错误");
+		return false;
+		
+	}
+
+	@Override
+	public void logout() {
+		HttpSession session = ServletActionContext.getRequest().getSession();
+		session.removeAttribute("nowuser");
+	}
+	
+}

@@ -1,0 +1,41 @@
+package cn.it.hotel.action;
+
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import cn.it.hotel.model.Room;
+import cn.it.hotel.model.Roomcategory;
+
+@Controller
+@Scope("prototype")
+public class RoomAction extends BaseAction<Room> {
+
+	public String queryJoinRoomcategoryAndRoomstate(){
+		pageMap=new HashMap<String, Object>();
+		System.out.println("rname:"+model.getRname());
+		List<Room> roomList=roomService.queryJoinRoomcategoryAndRoomsate(model.getRname(), page, rows);
+		pageMap.put("rows", roomList);
+		pageMap.put("total", roomService.getCount(model.getRname()));
+		return "jsonMap";
+	}
+	public String deleteByRids(){
+		System.out.println("删除rid为:"+rids);
+		roomService.deleteByRids(rids);
+		inputStream=new ByteArrayInputStream("true".getBytes());
+		return "stream";
+	}
+	
+	public void save(){
+		System.out.println(model);
+		roomService.save(model);
+	}
+	
+	public void update(){
+		System.out.println(model);
+		roomService.update(model);
+	}
+}

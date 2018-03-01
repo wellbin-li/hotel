@@ -1,0 +1,7 @@
+本系统基于SSH，Jquery-easyui为开发框架
+开发工具：MyEclipse 10.7
+数据库：MySQL 5.7
+运行环境：Tomcat 7或8
+
+管理员登录： 账号：admin 密码：admin
+普通用户登录 ： 账号：user 密码：user

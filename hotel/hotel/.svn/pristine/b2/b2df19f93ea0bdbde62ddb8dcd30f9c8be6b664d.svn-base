@@ -1,0 +1,84 @@
+package cn.it.hotel.model;
+
+/**
+ * Sorder entity. @author MyEclipse Persistence Tools
+ */
+
+public class Sorder implements java.io.Serializable {
+
+	// Fields
+
+	private Integer sid;
+	private String sname;
+	private Double sprice;
+	private Integer snumber;
+	private Integer sfid;
+	private Roomcategory roomcategory;
+
+	// Constructors
+
+	/** default constructor */
+	public Sorder() {
+	}
+
+	/** full constructor */
+	public Sorder(String sname, Double sprice, Integer snumber, Integer sfid,
+			Integer srcid) {
+		this.sname = sname;
+		this.sprice = sprice;
+		this.snumber = snumber;
+		this.sfid = sfid;
+	}
+
+	// Property accessors
+
+	public Integer getSid() {
+		return this.sid;
+	}
+
+	public void setSid(Integer sid) {
+		this.sid = sid;
+	}
+
+	public String getSname() {
+		return this.sname;
+	}
+
+	public void setSname(String sname) {
+		this.sname = sname;
+	}
+
+	public Double getSprice() {
+		return this.sprice;
+	}
+
+	public void setSprice(Double sprice) {
+		this.sprice = sprice;
+	}
+
+	public Integer getSnumber() {
+		return this.snumber;
+	}
+
+	public void setSnumber(Integer snumber) {
+		this.snumber = snumber;
+	}
+
+	public Integer getSfid() {
+		return this.sfid;
+	}
+
+	public void setSfid(Integer sfid) {
+		this.sfid = sfid;
+	}
+
+	public Roomcategory getRoomcategory() {
+		return roomcategory;
+	}
+
+	public void setRoomcategory(Roomcategory roomcategory) {
+		this.roomcategory = roomcategory;
+	}
+
+
+}

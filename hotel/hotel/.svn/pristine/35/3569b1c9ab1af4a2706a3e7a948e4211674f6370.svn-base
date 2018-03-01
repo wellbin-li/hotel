@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<!-- 
+		1:搭建spring开发环境
+			1.1：添加配置文件，和相应的spring-3.2-core.jar包
+			1.2: 创建Date对象，如果成功则spring的环境ok
+			1.3：通过基于Spring Junit测试实例化Date
+		2:搭建hibernate的开发环境
+			2.1：添加配置文件和相应的hibernate.jar+mysql驱动包
+			2.2：分析/hotel/src/cn/it/hotel/util/HibernateSessionFactory.java作用：加载hibernate配置文件，创建session
+			2.3：你想生成model，orm映射文件
+			2.4: 创建service，通过new方式执行数据入库，在JEE6中会出现unable to get the default Bean Validation factory
+			     解决方案：在hibernate配置文件中：<property name="javax.persistence.validation.mode">none</property>
+		3:Spring与hibernate整合(采用AOP来管理事物实现声明式事务)
+			3.1：添加spring-3.2-aop.jar spring-3.2-persistence.jar c3p0.jar
+			3.2: 配置数据源com.mchange.v2.c3p0.ComboPooledDataSource
+			3.3: 采用LocalSessionFactoryBean	取代HibernateTemplate
+			3.4: 配置事务管理器，管理SessionFactory,这样所有的session将会有声明式事务
+			3.5：配置advice(通知),是指定了哪些方法要用什么样的事务模式
+			3.6：配置AOP切面表达式
+			3.7: 让Service交给Spring管理，并且依赖sessionFactory.如果能插入数据，则说明声明式事务OK
+		4:搭建Struts的开发环境
+			4.1：添加配置文件和相应的struts-2.3.jar包，并且在web.xml中配置StrutsPrepareAndExecuteFilter
+			4.2: 创建action并且配置到struts.xml中
+			4.3：通过jsp访问Action，如果Action可以创建，则代表环境OK
+			4.4：默认在没有整合的时候Action的工厂为:(struts) for (com.opensymphony.xwork2.ObjectFactory)
+		5:创建Spring与struts的整合环境(采用Spring来管理Action，这样Action的依赖就能够注入进来)	
+			5.1：添加spring-3.2-web.jar 里面包括struts2-spring-plugin-2.1.6.jar
+			5.2：把Action和它的依赖交给Spring管理 并配置在：/hotel/src/applicationContext-action.xml
+			5.3：在struts.xml中class对应的是spring中配置action的id值
+			5.4: 在web.xml中配置监听器ContextLoaderListener，启动时加载Spring配置文件
+				Choosing bean (struts) for (com.opensymphony.xwork2.UnknownHandlerManager)
+			
+			
+	 -->
+	 <context:component-scan base-package="cn.it.hotel.."/>
+	 
+	 <bean id="dateSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+	 	<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+	 	<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/hotel"></property>
+	 	<property name="user" value="root"></property>
+	 	<property name="password" value="root"></property>
+	 </bean>
+	 
+	 <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	 	<property name="dataSource" ref="dateSource"/>
+	 	<property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+	 </bean>
+	 
+	 <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+	 	<property name="sessionFactory" ref="sessionFactory"></property>
+	 </bean>
+	 
+	 <tx:advice id="advice" transaction-manager="transactionManager">
+	 	<tx:attributes>
+	 		<tx:method name="save*" propagation="REQUIRED"/>
+	 		<tx:method name="update*" propagation="REQUIRED"/>
+	 		<tx:method name="delete*" propagation="REQUIRED"/>
+	 		<tx:method name="*" propagation="SUPPORTS"/>
+	 	</tx:attributes>
+	 </tx:advice>
+	 
+	 <aop:config>
+	    <!-- 配置哪些包的类要切入事务 -->
+	 	<aop:pointcut expression="execution(* cn.it.hotel.service.impl.*.*(..))" id="pointcut"/>
+	 	<aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>
+	 </aop:config>
+</beans>

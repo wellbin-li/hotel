@@ -1,0 +1,169 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<%@ include file="/public/head.jspf" %>
+  	<style type="text/css">
+  		#top{
+  			padding: 30px;
+  			padding-top: 50px;
+  			text-align: right;
+  			background: url(images/t.jpg);
+  		
+  		}
+  		#menu{
+  			width:200px;
+  			/*border:1px solid red;*/
+  		}
+  		#menu ul{
+  			list-style: none;
+  			padding: 0px;
+  			margin: 0px;
+  		}
+  		#menu ul li{
+  			border-bottom: 1px solid red;
+  		}
+  		#menu ul li a{
+  			/* 设置a标签的宽，则先转换为块级元素  */
+  			display: block;
+  			font-size:13px;
+  			background-color: #00a6ac;
+  			color: #fff;
+  			padding: 8px;
+  			padding-left:30px;
+  			text-decoration: none;
+  			
+  		}
+  		#menu ul li a:hover{
+  			color:#0000cc;
+  			background-color: #9b95c9;
+  		}
+  	</style>
+  	
+  	<script type="text/javascript">
+  		var session_nowuser = '${nowuser}';
+		if (!session_nowuser) {//如没有登录,直接跳转到登录页面
+			window.location.href='send_admin_login.action';
+		}
+		//
+		$(function(){
+			var session_nowusercategory = '${nowuser.ucategory}';
+			if(session_nowusercategory==0){
+				$(".privilege").attr("title","send_admin_noprivilege.action");
+			}
+		});
+		//浏览器关闭时注销用户（有bug）
+		$(window).bind("beforeunload",function(){
+  			//发送ajax请求
+			$.post("user_logout.action",{},function(result){
+			if(result=="true"){
+				window.location.href='send_admin_login.action';
+			}else{
+				$.messager.show({
+					title:'错误消息',
+					msg:'注销失败，请检查操作！',
+					timeout:2000,
+					showType:'slide'
+					});
+				}
+			},"text");
+		});
+  		$(function(){
+  			$("a[title]").click(function(){
+  				var text=$(this).text();
+  				var href=$(this).attr("title");
+  				// 1:判断当前右边是否已有相应的tab
+  				if($("#tt").tabs("exists",text)){
+  					$("#tt").tabs("select",text);
+  				}else{
+  					// 2：如果没有则创建一个新的tab 否则切换到当前tab
+  					$("#tt").tabs("add",{
+  						title:text,
+  						closable:true,
+  						content:'<iframe title=' + text +' src=' + href +' frameborder="0" width="100%" height="100%"/>'
+  					});
+  				}
+  				
+  			});
+  			//注销按钮事件
+  			$("#btn1").click(function(){
+  				$.messager.confirm('退出确认对话框', '是否要退出？', function(r){
+  					if(r){
+  						//发送ajax请求
+						$.post("user_logout.action",{},function(result){
+							if(result=="true"){
+								window.location.href='send_admin_login.action';
+							}else{
+								$.messager.show({
+									title:'错误消息',
+									msg:'注销失败，请检查操作！',
+									timeout:2000,
+									showType:'slide'
+								});
+							}
+						},"text");
+  					}
+  				});	
+  			});
+  			$("#btn2").click(function(){
+  				$.messager.confirm('个人账号注销确认对话框', '是否要注销（注销后账号将彻底删除）？', function(r){
+  					if(r){
+  						//发送ajax请求
+  						var nowUid = '${nowuser.uid}'
+						$.post("user_deleteNowUser.action",{nowUserUid:nowUid},function(result){
+							if(result=="true"){
+								window.location.href='send_admin_login.action';
+							}else{
+								$.messager.show({
+									title:'错误消息',
+									msg:'注销失败，请检查操作！',
+									timeout:2000,
+									showType:'slide'
+								});
+							}
+						},"text");
+  					}
+  				});	
+  			});
+  		});
+  	</script>
+  </head>
+	<body class="easyui-layout">   
+	    <div id="top" data-options="region:'north'" style="height:100px;">
+	       当前登录用户：<font color="red" >${nowuser.ulogin}</font>
+	       &nbsp;<a id="btn1" href="#">安全退出</a>
+	    </div>       
+	    <div data-options="region:'west',title:'系统操作'" style="width:200px;">
+	    	<!-- 此处显示的是系统菜单 -->
+			<div id="menu" class="easyui-accordion" style="height:500px;" data-options="fit:true">   
+			    <div title="&nbsp;&nbsp;基本操作">   
+			        <ul>
+			        	<li><a href="#" title="send_operation_query.action">客房经营管理</a></li>
+			        	<li><a class="privilege" href="#" title="send_room_query.action">客房信息管理</a></li>
+				  		<li><a class="privilege" href="#" title="send_roomcategory_query.action">客房类型管理</a></li>
+				  		<li><a class="privilege" href="#" title="send_roomstate_query.action">客房状态管理</a></li>
+				  		<li><a href="#" title="send_client_query.action">客户信息管理</a></li>
+				  		<li><a class="privilege" href="#" title="send_user_query.action">用户信息管理</a></li>
+				  		<li><a href="#" title="send_business_query.action">客房业务查询</a></li>
+				  		<li><a href="#" title="send_business_sale.action">客房业务统计</a></li>
+				  		<li><a href="#" title="send_business_income.action">营业收入统计</a></li>
+	  				</ul>   
+			    </div>   
+			    <div title="&nbsp;&nbsp其它操作">   
+			        <ul>
+				  		<li><a href="#" title="send_user_alterPassword.action">个人密码修改</a></li>
+				  		<li><a id="btn2" href="#">个人账号注销</a></li>
+				  	</ul>   
+			    </div>   
+			</div> 
+	    </div>   
+	    <div data-options="region:'center',title:'操作页面'" style="padding:1px;background:#fff;">
+	    	<div id="tt" class="easyui-tabs" data-options="fit:true">   
+			    <div title="首页" style="padding:10px">   
+			        	<font>欢迎来到酒店客房管理系统</font>  
+			    </div>     
+			</div> 
+	    </div> 
+	    <div id="win" data-options="collapsible:false,minimizable:false,maximizable:false,modal:true"></div>  
+	</body> 
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 开发模式，在修改struts配置文件的时候不需要重启容器 -->
+	<constant name="struts.devMode" value="true"/>
+	<package name="hotel" extends="json-default">
+		<global-results>
+			<result name="aindex">/WEB-INF/main/aindex.jsp</result>
+		</global-results>
+		<action name="roomcategory_*" class="roomcategoryAction" method="{1}">
+			<result name="jsonMap1" type="json">
+				<param name="root">pageMap</param>
+				<param name="excludeProperties">
+					<!-- rows[0+].account.pass -->
+					rows\[\d+\]\.user\.upassword,
+					rows\[\d+\]\.user\.uname
+				</param>
+			</result>
+			<result name="stream" type="stream">
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="index">/index.jsp</result>
+			<result name="jsonMap" type="json">
+				<param name="root">pageMap</param>
+			</result>
+			<result name="stream" type="stream">
+				<param name="inputName">inputStream</param>
+			</result>
+			<result name="jsonList" type="json">
+				<param name="root">jsonList</param>
+				<param name="excludeProperties">
+					\[\d+\].upassword,
+					\[\d+\].uname
+				</param>
+			</result>
+		</action>
+		<action name="client_*" class="clientAction" method="{1}">
+			<result name="jsonMap" type="json">
+				<param name="root">pageMap</param>
+			</result>
+		</action>
+		<!-- 用来完成系统请求转发的action，所有的请求都交给execute -->
+		<action name="send_*_*" class="sendAction">
+			<result name="send">/WEB-INF/{1}/{2}.jsp</result>
+		</action>
+	</package>
+</struts>    

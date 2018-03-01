@@ -1,0 +1,24 @@
+package cn.it.hotel.service.impl;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.Account;
+import cn.it.hotel.model.Category;
+import cn.it.hotel.service.AccountService;
+import cn.it.hotel.service.CategoryService;
+import cn.it.hotel.util.HibernateSessionFactory;
+/**
+ * 
+ * @author Administrator
+ *(模块自身的业务逻辑)
+ */
+@SuppressWarnings("unchecked")
+@Service("accountService")
+public class AccountServiceImpl extends BaseServiceImpl<Account> implements AccountService {
+	//管理员登录功能
+	
+}

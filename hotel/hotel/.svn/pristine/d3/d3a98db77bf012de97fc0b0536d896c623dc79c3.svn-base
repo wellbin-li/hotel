@@ -1,0 +1,40 @@
+package cn.it.hotel.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.Room;
+import cn.it.hotel.service.RoomService;
+
+@SuppressWarnings("unchecked")
+@Service("RoomService")
+public class RoomServiceImpl extends BaseServiceImpl<Room> implements RoomService {
+
+	@Override
+	public List<Room> queryJoinRoomcategoryAndRoomsate(String rname, int page,
+			int size) {
+		String hql="FROM Room r LEFT JOIN FETCH r.roomcategory LEFT JOIN FETCH r.roomstate WHERE r.rname LIKE :rname GROUP BY r.rid";
+		return getSession().createQuery(hql)
+				.setString("rname", "%" + rname + "%")
+				.setFirstResult((page-1)*size)
+				.setMaxResults(size)
+				.list();
+	}
+
+	@Override
+	public Long getCount(String rname) {
+		String hql="SELECT count(r) FROM Room r WHERE r.rname LIKE :rname";
+		return (Long)getSession().createQuery(hql)
+				.setString("rname", "%" + rname + "%")
+				.uniqueResult();
+	}
+
+	@Override
+	public void deleteByRids(String rids) {
+		String hql="DELETE FROM Room WHERE rid in (" + rids + ")";
+		getSession().createQuery(hql)
+				.executeUpdate();
+	}
+
+}

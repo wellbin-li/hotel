@@ -1,0 +1,68 @@
+package cn.it.hotel.model;
+
+/**
+ * Roomcategory entity. @author MyEclipse Persistence Tools
+ */
+
+public class Roomcategory implements java.io.Serializable {
+
+	// Fields
+
+	private Integer rcid;
+	private String rctype;
+	private Boolean rchot;
+	private Account account;
+	@Override
+	public String toString() {
+		return "Roomcategory [rcid=" + rcid + ", rctype=" + rctype + ", rchot="
+				+ rchot + "]";
+	}
+
+	// Constructors
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	/** default constructor */
+	public Roomcategory() {
+	}
+
+	/** full constructor */
+	public Roomcategory(Integer rcid,String rctype, Boolean rchot) {
+		this.rcid=rcid;
+		this.rctype = rctype;
+		this.rchot = rchot;
+	}
+
+	// Property accessors
+
+	public Integer getRcid() {
+		return this.rcid;
+	}
+
+	public void setRcid(Integer rcid) {
+		this.rcid = rcid;
+	}
+
+	public String getRctype() {
+		return this.rctype;
+	}
+
+	public void setRctype(String rctype) {
+		this.rctype = rctype;
+	}
+
+	public Boolean getRchot() {
+		return this.rchot;
+	}
+
+	public void setRchot(Boolean rchot) {
+		this.rchot = rchot;
+	}
+
+}

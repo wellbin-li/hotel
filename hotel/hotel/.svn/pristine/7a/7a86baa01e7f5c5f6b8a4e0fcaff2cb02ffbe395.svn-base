@@ -1,0 +1,63 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<%@ include file="/public/head.jspf" %>
+  	<style type="text/css">
+  		form div{
+  			margin:25;
+  			margin-left:10;
+  		}
+  	</style>
+  	<script type="text/javascript">
+  		$(function(){
+  			//iframe 中的dg对象
+  			var dg=parent.$("iframe[title='客房状态管理']").get(0).contentWindow.$("#dg");
+  			//完成数据的回显(此代码尽量放在远程加载下拉框的前面)
+  			var rows=dg.datagrid("getSelections");
+  			$('#ff').form('load',{
+				rsid:rows[0].rsid,
+				rsname:rows[0].rsname
+			});	
+  			$("input[name=rsname]").validatebox({
+  				required:true,
+  				missingMessage:'请输入状态名称'
+  			});
+  			//窗体弹出默认时禁用验证
+  			$("#ff").form("disableValidation");
+  			//注册button事件
+  			$("#btn").click(function(){
+  				//开启验证
+  				$("#ff").form("enableValidation");
+  				if($("#ff").form("validate")){
+  					//提交数据
+  					$('#ff').form('submit', {
+						url:'roomstate_update.action',
+						success: function(){
+							//关闭当前窗体
+							parent.$("#win").window("close");
+							//刷新页面 获取aindex--->iframe--->dg    dom--->jquery---easyui
+							//不兼容  parent.$("iframe[title='类别管理']").contents().find("#dg").datagrid("getSelections");
+							dg.datagrid("reload");
+						}
+					});
+  					
+  				}
+  			});
+  		});
+  	</script>
+  </head>
+  
+  <body>
+  	<form id="ff" method="post">   
+	    <div>   
+	        <label for="rsname">状态名称:</label>   
+	        <input type="text" name="rsname"/>   
+	    </div>   
+	    <div>
+	    	<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'">更新</a>
+	    	<input type="hidden" name="rsid"/>
+	    </div>    
+	</form>  
+  </body>
+</html>

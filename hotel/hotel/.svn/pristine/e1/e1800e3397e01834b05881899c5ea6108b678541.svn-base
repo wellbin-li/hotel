@@ -1,0 +1,39 @@
+package cn.it.hotel.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.User;
+import cn.it.hotel.service.UserService;
+
+@SuppressWarnings("unchecked")
+@Service("userService")
+public class UserServiceImpl extends BaseServiceImpl<User> implements UserService {
+
+	@Override
+	public List<User> queryUser(String uname, int page, int size) {
+		String hql="FROM User u WHERE u.uname LIKE :uname";
+		return getSession().createQuery(hql)
+				.setString("uname", "%" + uname + "%")
+				.setFirstResult((page-1)*size)
+				.setMaxResults(size)
+				.list();
+	}
+
+	@Override
+	public Long getCount(String uname) {
+		String hql="SELECT count(u) FROM User u WHERE u.uname LIKE :uname";
+		return (Long)getSession().createQuery(hql)
+				.setString("uname", "%" + uname + "%")
+				.uniqueResult();
+	}
+
+	@Override
+	public void deleteByUids(String uids) {
+		String hql="DELETE FROM User WHERE uid in (" + uids + ")";
+		getSession().createQuery(hql)
+				.executeUpdate();
+	}
+	//管理员登录功能
+}

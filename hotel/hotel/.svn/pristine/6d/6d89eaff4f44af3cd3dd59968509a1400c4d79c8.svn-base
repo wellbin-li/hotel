@@ -1,0 +1,30 @@
+package cn.it.hotel.service.impl;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONSerializer;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import cn.it.hotel.model.Room;
+import cn.it.hotel.service.RoomService;
+import cn.it.hotel.service.SorderService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations="classpath:applicationContext-*.xml")
+public class SorderServiceImplTest {
+
+	@Resource
+	private SorderService sorderService;
+	
+	@Test
+	public void querySale(){
+		System.out.println(JSONSerializer.toJSON(sorderService.querySale(5)));
+//		for(Object temp:sorderService.querySale(5)){
+//			System.out.println(temp);
+//		}
+	}
+}

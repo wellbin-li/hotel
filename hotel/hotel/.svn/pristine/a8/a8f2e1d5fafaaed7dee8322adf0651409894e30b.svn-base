@@ -1,0 +1,92 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<%@ include file="/public/head.jspf" %>
+  	<style type="text/css">
+  		form div{
+  			margin:25;
+  			margin-left:10;
+  		}
+  	</style>
+  	<script type="text/javascript">
+  		$(function(){
+  			//iframe 中的dg对象
+  			var dg=parent.$("iframe[title='类别管理']").get(0).contentWindow.$("#dg");
+  			//对管理员的下拉列表框进行远程加载
+  			$('#cc').combobox({    
+			    url:'account_query.action',    
+			    valueField:'id',    
+			    textField:'login',
+			    panelHeight:'auto',
+			    panelWidth:150,
+			    width:150,
+			    editable:false
+			}); 
+  			//完成数据的回显
+  			var rows=dg.datagrid("getSelections");
+  			$('#ff').form('load',{
+				rcid:rows[0].rcid,
+				rctype:rows[0].rctype,
+				rchot:rows[0].rchot,
+				'account.id':rows[0].account.id
+			});	
+  			//窗体弹出默认时禁用验证
+  			$("input[name=rctype]").validatebox({
+  				required:true,
+  				missingMessage:'请输入类别名称'
+  			});
+  			$("#ff").form("disableValidation");
+  			//注册button事件
+  			$("#btn").click(function(){
+  				//开启验证
+  				$("#ff").form("enableValidation");
+  				if($("#ff").form("validate")){
+  					//提交数据
+  					$('#ff').form('submit', {
+						url:'roomcategory_update.action',
+						success: function(){
+							//关闭当前窗体
+							parent.$("#win").window("close");
+							dg.datagrid("reload");
+						}
+					});
+  					
+  				}
+  			});
+  		});
+  	</script>
+  </head>
+  
+  <body>
+  	<form id="ff" method="post">   
+	    <div>   
+	        <label for="rctype">类别名称:</label>   
+	        <input type="text" name="rctype"/>   
+	    </div>   
+	    <div>   
+	        <label for="rchot">热点:</label>   
+	        <input type="radio" name="rchot" value="true"/>热点
+	        <input type="radio" name="rchot" value="false" checked="checked"/>非热点
+	    </div>
+	    <div>   
+	        <label for="account">所属管理员:</label> 
+	        <!-- 基于html代码的方式  
+	        <select id="cc" class="easyui-combobox" name="dept" style="width:200px;">   
+			    <option value="aa">aitem1</option>   
+			    <option>bitem2</option>   
+			    <option>bitem3</option>   
+			    <option>ditem4</option>   
+			    <option>eitem5</option>   
+			</select>  
+			-->    
+			<!-- 远程加载管理员数据 -->
+			<input id="cc" name="account.id">      
+	    </div> 
+	    <div>
+	    	<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'">更新</a>
+	    	<input type="hidden" name="rcid"/>
+	    </div>    
+	</form>  
+  </body>
+</html>

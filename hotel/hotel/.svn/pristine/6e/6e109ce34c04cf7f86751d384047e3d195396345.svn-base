@@ -1,0 +1,10 @@
+package cn.it.hotel.service;
+
+
+
+import cn.it.hotel.model.Account;
+
+public interface AccountService extends BaseService<Account> {
+
+	
+}

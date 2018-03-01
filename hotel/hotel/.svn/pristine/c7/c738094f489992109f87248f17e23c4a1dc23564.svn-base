@@ -1,0 +1,32 @@
+package cn.it.hotel.action;
+
+import java.util.Map;
+
+import org.apache.struts2.interceptor.ApplicationAware;
+import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.SessionAware;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import cn.it.hotel.model.Account;
+import cn.it.hotel.model.Category;
+import cn.it.hotel.service.CategoryService;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
+/*
+ * ModelDriven:此接口必须要实现getModel()方法，此方法会把返回的对象压倒栈顶中
+ */
+
+@Controller
+@Scope("prototype")
+public class AccountAction extends BaseAction<Account> {
+
+	public String query(){
+		jsonList=accountService.query();
+		return "jsonList";
+	}
+	
+	
+}

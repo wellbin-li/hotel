@@ -1,0 +1,26 @@
+package cn.it.hotel.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import cn.it.hotel.model.Room;
+import cn.it.hotel.model.Sorder;
+import cn.it.hotel.service.RoomService;
+import cn.it.hotel.service.SorderService;
+
+@SuppressWarnings("unchecked")
+@Service("SorderService")
+public class SorderServiceImpl extends BaseServiceImpl<Sorder> implements SorderService {
+
+	@Override
+	public List<Object> querySale(int number) {
+		String hql="SELECT s.sname,sum(s.snumber) FROM Sorder s JOIN s.roomcategory GROUP BY s.roomcategory.rcid";
+		return getSession().createQuery(hql)
+				.setFirstResult(0)
+				.setMaxResults(number)
+				.list();
+	}
+
+
+}

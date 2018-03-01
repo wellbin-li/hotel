@@ -1,0 +1,11 @@
+package cn.it.hotel.service;
+
+import java.util.List;
+
+import cn.it.hotel.model.Sorder;
+
+public interface SorderService extends BaseService<Sorder> {
+
+	//查询热点商品的销售量
+	public List<Object> querySale(int number);
+}

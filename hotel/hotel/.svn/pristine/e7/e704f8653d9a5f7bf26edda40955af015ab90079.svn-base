@@ -1,0 +1,81 @@
+/*删除商城数据库,如果存在*/
+drop database if exists hotel;
+/*创建数据库,并设置编码*/
+create database hotel default character set utf8;
+
+use hotel;
+/*删除管理员表*/
+drop table if exists account;
+/*删除商品类别表*/
+drop table if exists category;
+/*删除客房类别表*/
+drop table if exists roomcategory;
+
+/*============================*/
+/* Table: 管理员表结构 		  */
+/*============================*/
+create table account
+(
+   /* 管理员编号,自动增长 */
+   id                  int not null auto_increment,
+   /* 管理员登录名  */
+   login               varchar(20),
+   /* 管理员姓名  */
+   name                varchar(20),
+   /* 管理员密码 */
+   pass                varchar(20),
+   /* 设置编号为主键 */
+   primary key (id)
+);
+
+/*=============================*/
+/* Table: 商品类别表结构 		   */
+/*=============================*/
+create table category
+(
+   /* 类别编号,自动增长 */
+   id                  int not null auto_increment,
+   /* 类别名称 */
+   type                varchar(20),
+   /* 类别是否为热点类别,热点类别才有可能显示在首页 */
+   hot                 bool default false,
+   /* 外键,此类别由哪位管理员管理 */
+   aid                  int,
+   /* 设置类别编号为主键 */
+   primary key (id)
+);
+/*=============================*/
+/* Table: 商品类别表结构 		   */
+/*=============================*/
+create table roomcategory
+(
+   /* 类别编号,自动增长 */
+   rcid                  int not null auto_increment,
+   /* 类别名称 */
+   rctype                varchar(20),
+   /* 类别是否为热点类别*/
+   rchot                 bool default false,
+   /* 外键,此类别由哪位管理员管理 */
+   rcaid                  int,
+   /* 设置类别编号为主键 */
+   primary key (rcid)
+);
+
+/*插入测试用例*/
+INSERT INTO account(login,name,pass) values ('admin','管理员','admin');
+INSERT INTO account(login,name,pass) values ('user','客服A','user');
+INSERT INTO account(login,name,pass) values ('user2','客服B','user2');
+
+INSERT INTO category (type,hot,aid) VALUES ('男士休闲',true,1);
+INSERT INTO category (type,hot,aid) VALUES ('女士休闲',true,2);
+INSERT INTO category (type,hot,aid) VALUES ('儿童休闲',false,3);
+
+INSERT INTO roomcategory (rctype,rchot,rcaid) VALUES ('标准（单）间',true,1);
+INSERT INTO roomcategory (rctype,rchot,rcaid) VALUES ('标准（双）间',true,2);
+INSERT INTO roomcategory (rctype,rchot,rcaid) VALUES ('大床房',false,1);
+INSERT INTO roomcategory (rctype,rchot,rcaid) VALUES ('行政套房',false,2);
+INSERT INTO roomcategory (rctype,rchot,rcaid) VALUES ('豪华套房',false,1);
+
+SELECT * FROM account;
+SELECT * FROM category;
+SELECT * FROM roomcategory;

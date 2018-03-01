@@ -1,0 +1,84 @@
+package cn.it.hotel.model;
+
+
+
+/**
+ * Room entity. @author MyEclipse Persistence Tools
+ */
+
+public class Room  implements java.io.Serializable {
+
+
+    // Fields    
+
+     private Integer rid;
+     private String rname;
+     private Roomcategory roomcategory;
+     private Roomstate roomstate;
+     private String rremark;
+
+
+    @Override
+	public String toString() {
+		return "Room [rid=" + rid + ", rname=" + rname + "]";
+	}
+
+	/** default constructor */
+    public Room() {
+    }
+   
+    // Property accessors
+
+    public Room(Integer rid, String rname, Roomcategory roomcategory,
+			Roomstate roomstate, String rremark) {
+		super();
+		this.rid = rid;
+		this.rname = rname;
+		this.roomcategory = roomcategory;
+		this.roomstate = roomstate;
+		this.rremark = rremark;
+	}
+
+
+
+	public Integer getRid() {
+        return this.rid;
+    }
+    
+    public void setRid(Integer rid) {
+        this.rid = rid;
+    }
+
+    public String getRname() {
+        return this.rname;
+    }
+    
+    public void setRname(String rname) {
+        this.rname = rname;
+    }
+
+    public Roomcategory getRoomcategory() {
+		return roomcategory;
+	}
+
+	public void setRoomcategory(Roomcategory roomcategory) {
+		this.roomcategory = roomcategory;
+	}
+
+	public Roomstate getRoomstate() {
+		return roomstate;
+	}
+
+	public void setRoomstate(Roomstate roomstate) {
+		this.roomstate = roomstate;
+	}
+
+	public String getRremark() {
+        return this.rremark;
+    }
+    
+    public void setRremark(String rremark) {
+        this.rremark = rremark;
+    }
+
+}

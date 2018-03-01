@@ -1,0 +1,15 @@
+package cn.it.hotel.service;
+
+import java.util.List;
+
+import cn.it.hotel.model.Room;
+
+public interface RoomService extends BaseService<Room> {
+
+	    //查询客房信息，级联客房种类和状态
+		public List<Room> queryJoinRoomcategoryAndRoomsateAndClientAndUser(String rname,int page,int size);
+		//根据关键字查询总记录数
+		public Long getCount(String rname);
+		//根据ids删除多条记录
+		public void deleteByRids(String rids);
+}

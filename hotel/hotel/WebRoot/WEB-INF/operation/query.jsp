@@ -1,0 +1,223 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  	<%@ include file="/public/head.jspf"%>
+  	<style type="text/css">
+  		.searchbox {
+		  margin:-3;
+		}
+  	</style>
+  	<script type="text/javascript">
+  		$(function(){
+  			$('#dg').datagrid({ 
+  			//
+  			loadMsg:'请等待..........',
+  			//请求url的地址   
+		    url:'room_queryJoinRoomcategoryAndRoomsateAndClientAndUser.action',
+		 	//在请求远程数据的时候发送额外的参数
+		 	queryParams:{rname:''},
+		 	//显示斑马线
+		 	striped:true,
+		 	//如果为true，则只允许选择一行，全选会功能失效(在此页面必须设置为true)
+		 	singleSelect:true,
+		 	//singleSelect:true,
+		 	//如果为true，则在同一行中显示数据。设置为true可以提高加载性能。默认true
+		 	nowrap:true,
+		 	toolbar: [{
+					text:'客房号码：',
+			},'-',{
+					text:"<input id='ss' name='search'/>",
+			}],
+			pageSize:15,
+			pageList:[5,10,15,20],
+			//在底部显示分页工具箱
+			pagination:true,
+			//自动适应列,如果设置，则不会显示水平滚动条，在显示冻结列时此参数不要设置
+			fitColumns:true,
+		    //同列属性，但是这些列将会被冻结在左侧。
+		    /* frozenColumns:[[
+		    	//xyz任意取的  但不能为空
+		    	{field:'xyz',checkbox:true},
+		    	{field:'rid',title:'编号',width:100},
+		    ]], */
+		    //配置dg得到列字段field:列字段的名称，与json的key捆绑title:列标题   
+		    columns:[[
+		    	{field:'rid',title:'编号',width:100},  
+		        {field:'rname',title:'客房号码',width:100,
+		        //用来格式化当前列的值，返回的是最终的数据
+			        formatter: function(value,row,index){
+						return "<span title="+value+">"+value+"</span>";
+					}
+		        },
+		        {field:'roomcategory.rcname',title:'客房类型',width:100,
+		        	formatter: function(value,row,index){
+		        		if(row.roomcategory!=null && row.roomcategory.rcname!=null){
+		        			return row.roomcategory.rcname;
+		        		}
+					}
+		        },    
+		        {field:'roomcategory.rcprice',title:'客房单价',width:100,
+		        	formatter: function(value,row,index){
+		        		if(row.roomcategory!=null && row.roomcategory.rcprice!=null){
+		        			return row.roomcategory.rcprice;
+		        		}
+					}
+		        },    
+		        {field:'roomstate.rsname',title:'客房状态',width:100,
+		        	formatter: function(value,row,index){
+		        		if(row.roomstate!=null && row.roomstate.rsname!=null){
+		        			return row.roomstate.rsname;
+		        		}
+					},
+					styler: function(value,row,index){
+						if (row.roomstate!=null && row.roomstate.rsname=="已入住"){
+							return 'background-color:#ffff00;color:red;';
+						}else if(row.roomstate.rsname=="已预订"){
+							return 'background-color:#fedcbd;color:green;';
+						}
+					}	
+		        },
+		        {field:'client.cname',title:'顾客',width:100,
+		        	formatter: function(value,row,index){
+		        		if(row.client!=null && row.client.cname!=null){
+		        			return row.client.cname;
+		        		}
+					}
+		        },
+		        {field:'rdate',title:'入住日期',width:100,
+		        	//格式化时间
+		        	formatter: function (value, row, index) {
+                                var date = new Date(value);
+                                var year = date.getFullYear().toString();
+                                var month = (date.getMonth() + 1);
+                                var day = date.getDate().toString();
+                                var hour = date.getHours().toString();
+                                var minutes = date.getMinutes().toString();
+                                var seconds = date.getSeconds().toString();
+                                if (month < 10) {
+                                    month = "0" + month;
+                                }
+                                if (day < 10) {
+                                    day = "0" + day;
+                                }
+                                if (hour < 10) {
+                                    hour = "0" + hour;
+                                }
+                                if (minutes < 10) {
+                                    minutes = "0" + minutes;
+                                }
+                                if (seconds < 10) {
+                                    seconds = "0" + seconds;
+                                }
+                                //数据库默认将日期为空值置为1970-01-01若为此值，则不显示
+                                if((year+month+day)==19700101){
+                                	return ;
+                                }
+                                return year + "-" + month + "-" + day;  	
+		        	}
+		        },
+		        {field:'rnumber',title:'入住天数',width:100},
+		        {field:'rcash',title:'押金',width:100},
+		        {field:'rfee',title:'总金额',width:100},
+		        {field:'rremark',title:'客房说明',width:100,
+		        //用来格式化当前列的值，返回的是最终的数据
+			        formatter: function(value,row,index){
+						return "<span title="+value+">"+value+"</span>";
+					}
+		        },
+		        {field:'user.ulogin',title:'处理人',width:100,
+		        	formatter: function(value,row,index){
+		        		if(row.user!=null && row.user.ulogin!=null){
+		        			return row.user.ulogin;
+		        		}
+					}
+		        },
+		        {field:'roomstate',title:'操作',width:100,align:'center',  
+                    formatter:function(value,row,index){
+                    	var s;
+                    	var e;
+                    	if (row.roomstate!=null && row.roomstate.rsname=="已入住"){
+                    		s = '<a href="#" mce_href="#" onclick="roomout(\''+ row.rid + '\')">退房</a> ';
+                    		return s;
+                    	}else if(row.roomstate.rsname=="空"){
+                    		s = '<a href="#" mce_href="#" onclick="roomin(\''+ row.rid + '\')">开房</a> ';
+                    		e = '<a href="#" mce_href="#" onclick="orderin(\''+ row.rid + '\')">订房</a> ';
+                    		return s+"| "+e;
+                    	}else if(row.roomstate.rsname=="已预订"){
+                    		s = '<a href="#" mce_href="#" onclick="roomjoin(\''+ row.rid + '\')">入住</a> ';
+                    		e = '<a href="#" mce_href="#" onclick="orderout(\''+ row.rid + '\')">退订</a> ';
+                    		return s+"| "+e;
+                    	}   
+                        //var d = '<a href="#" mce_href="#" onclick="del(\''+ index +'\')">删除</a> ';  
+                        return s+"| "+e;  
+                    }  
+                }   
+		    ]]    
+		});
+			//把普通的文本框转换为搜索文本框
+			$('#ss').searchbox({
+				//触发查询时间
+				searcher:function(value,name){
+				//获取当前查询的关键字，通过dg加载相应的信息 
+				//alert(value + "," + name); 
+				$('#dg').datagrid('load',{
+					rname: value,
+				});
+				}, 
+				prompt:'变形金刚' 
+			});  
+  			
+  		});
+  		//开房链接（rid为当前的行号）
+  		function roomin(rid){
+  			parent.$("#win").window({
+				title:'开房',
+				width:500,
+				height:500,
+				content:'<iframe src="send_operation_roomin.action" frameborder="0" width="100%" height="100%"/>'
+			});
+  		}
+  		//直接入住链接（rid为当前的行号）
+  		function roomjoin(rid){
+  			parent.$("#win").window({
+				title:'入住',
+				width:500,
+				height:500,
+				content:'<iframe src="send_operation_roomjoin.action" frameborder="0" width="100%" height="100%"/>'
+			});
+  		}
+  		//订房链接（rid为当前的行号）
+  		function orderin(rid){
+  			parent.$("#win").window({
+				title:'订房',
+				width:500,
+				height:500,
+				content:'<iframe src="send_operation_orderin.action" frameborder="0" width="100%" height="100%"/>'
+			});
+  		}
+  		//退订链接（rid为当前的行号）
+  		function orderout(rid){
+  			parent.$("#win").window({
+				title:'退订',
+				width:500,
+				height:500,
+				content:'<iframe src="send_operation_orderout.action" frameborder="0" width="100%" height="100%"/>'
+			});
+  		}
+  		//退房链接
+  		function roomout(rid){
+  			parent.$("#win").window({
+				title:'退房',
+				width:500,
+				height:500,
+				content:'<iframe src="send_operation_roomout.action" frameborder="0" width="100%" height="100%"/>'
+			});
+  		}
+  	</script>
+  </head>
+  
+  <body>
+  	<table id="dg"></table>  
+  </body>
+</html>
